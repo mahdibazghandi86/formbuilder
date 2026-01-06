@@ -1,0 +1,89 @@
+* {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #121212;
+  color: #fff;
+  height: 100vh;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  height: 100vh;
+}
+
+.sidebar {
+  background: #1f1f1f;
+  padding: 16px;
+  border-left: 2px solid #333;
+}
+
+.component {
+  background: #2a2a2a;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: grab;
+}
+
+.canvas {
+  padding: 20px;
+}
+
+.drop-zone {
+  min-height: 100%;
+  border: 3px dashed #555;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.form-item {
+  background: #1e1e1e;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.form-title {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.option input[type="text"] {
+  margin-right: 8px;
+  padding: 4px;
+}
+
+.add-option {
+  margin-top: 8px;
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+input{
+  background: #1e1e1e;
+  color: white;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 9px;
+  border: 1px solid #333;
+}
