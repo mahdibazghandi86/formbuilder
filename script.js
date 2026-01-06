@@ -62,6 +62,8 @@ function addComponent(type, isInner = false) {
   /* snap */
   const snap = document.createElement('div');
   snap.className = 'snap-point';
+  
+
   snap.onclick = () => {
     wrapper.classList.toggle('full');
     wrapper.classList.toggle('half');
@@ -302,3 +304,19 @@ function getDragAfterElement(container, y) {
     return closest;
   }, { offset: -Infinity }).element;
 }
+
+
+// ===== Delete all button =====
+
+
+const DeleteAllBtn = document.getElementById('DeleteAllBtn');
+DeleteAllBtn.onclick = () => {
+  canvas.innerHTML = "";
+}
+
+
+const JSONBtn = document.getElementById('JSONBtn');
+JSONBtn.onclick = () => {
+  console.log(canvas.children.input.value);
+}
+
