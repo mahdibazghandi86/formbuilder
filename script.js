@@ -1,64 +1,212 @@
-const components = document.querySelectorAll('.component');
-const dropZone = document.getElementById('drop-zone');
-
+const canvas = document.getElementById('canvas');
+//این خط داره میگه که این بوم نقاشی توعه که توش باید کاراتو بکنی
 let componentId = 0;
+//برای جدا سازی هر کامپوننت
+let draggedItem = null;
+//این میگه ایا این کامپوننت رو پرفتی یا نه
 
-components.forEach(c => {
-  c.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('type', c.dataset.type);
-  });
+/* ---------- DRAG FROM TOOLBAR ---------- */
+
+
+document.querySelectorAll('.top-bar button').forEach(btn => {
+    btn.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('component-type', btn.dataset.type);
+        e.dataTransfer.setData('source', 'toolbar'); 
+    });
 });
 
-dropZone.addEventListener('dragover', e => e.preventDefault());
 
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  addComponent(e.dataTransfer.getData('type'));
+
+
+/* ---------- DROP ON CANVAS ---------- */
+
+
+
+canvas.addEventListener('dragover', e => {
+    e.preventDefault();
+    canvas.classList.add('drag-over');
 });
 
-function addComponent(type) {
-  componentId++;
+canvas.addEventListener('dragleave', () => {
+    canvas.classList.remove('drag-over');
+});
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'form-item';
+canvas.addEventListener('drop', e => {
+    e.preventDefault();
+    canvas.classList.remove('drag-over');
 
-  const title = document.createElement('input');
-  title.className = 'form-title';
-  title.placeholder = 'عنوان فیلد';
-  wrapper.appendChild(title);
+    const source = e.dataTransfer.getData('source');
+    if (source !== 'toolbar') return;
 
-  if (type === 'text') {
-    wrapper.innerHTML += `<input type="text" placeholder="متن...">`;
-  }
+    const type = e.dataTransfer.getData('component-type');
+    if (!type) return;
 
-  if (type === 'checkbox' || type === 'radio') {
-    const optionsContainer = document.createElement('div');
-    const groupName = `group_${componentId}`; // 👈 کلید حل مشکل
+    addComponent(type);
+});
 
-    const addBtn = document.createElement('button');
-    addBtn.className = 'add-option';
-    addBtn.innerText = '+ افزودن گزینه';
 
-    addBtn.onclick = () => {
-      const opt = document.createElement('div');
-      opt.className = 'option';
 
-      opt.innerHTML = `
-        <input 
-          type="${type}" 
-          name="${type === 'radio' ? groupName : ''}"
-        >
-        <input type="text" placeholder="عنوان گزینه">
-      `;
 
-      optionsContainer.appendChild(opt);
+
+/* ---------- ADD COMPONENT ---------- */
+
+
+
+function addComponent(type,isInner = false) {
+    componentId++;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'form-item half';
+    wrapper.draggable = true;
+
+    /* snap */
+    const snap = document.createElement('div');
+    snap.className = 'snap-point';
+    snap.onclick = () => {
+        wrapper.classList.toggle('full');
+        wrapper.classList.toggle('half');
     };
+    wrapper.appendChild(snap);
 
-    wrapper.appendChild(optionsContainer);
-    wrapper.appendChild(addBtn);
 
-    addBtn.click(); // گزینه اولیه
-  }
+    /* title */
+    if (type !== 'group') {
+    const title = document.createElement('input');
+    title.className = 'form-title';
+    title.placeholder = 'عنوان فیلد';
+    wrapper.appendChild(title);
+    }
 
-  dropZone.appendChild(wrapper);
+
+    /* text */
+    if (type === 'text') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'متن...';
+        wrapper.appendChild(input);
+    }
+
+    /* checkbox / radio */
+    if (type === 'checkbox' || type === 'radio') {
+        const groupName = `group_${componentId}`;
+        const options = document.createElement('div');
+        options.className = 'options';
+
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'addbtn'; 
+        addBtn.textContent = '+ افزودن گزینه';
+
+        addBtn.onclick = () => {
+            const opt = document.createElement('div');
+            opt.className = 'option';
+            opt.innerHTML = `
+                <input type="${type}" ${type === 'radio' ? `name="${groupName}"` : ''}>
+                <input type="text" placeholder="عنوان گزینه">
+            `;
+            options.appendChild(opt);
+        };
+
+        wrapper.appendChild(options);
+        wrapper.appendChild(addBtn);
+        addBtn.click();
+    }
+    
+    if (type === 'group') {
+
+        wrapper.classList.add('group-item');
+
+        // title
+        if (type === 'group') {
+        const title = document.createElement('input');
+        title.className = 'form-title';
+        title.placeholder = 'عنوان گروه';
+        wrapper.appendChild(title);
+        }
+
+
+        // inner container
+        const inner = document.createElement('div');
+        inner.className = 'group-canvas';
+        wrapper.appendChild(inner);
+
+        // allow drop inside group
+        inner.addEventListener('dragover', e => {
+            e.preventDefault();
+            inner.classList.add('drag-over');
+        });
+      
+        inner.addEventListener('dragleave', () => {
+            inner.classList.remove('drag-over');
+        });
+      
+        inner.addEventListener('drop', e => {
+           e.preventDefault();
+           e.stopPropagation(); // 🔥 خیلی مهم
+           inner.classList.remove('drag-over');
+
+          const source = e.dataTransfer.getData('source');
+          if (source !== 'toolbar') return;
+
+          const type = e.dataTransfer.getData('component-type');
+          if (!type || type === 'group') return;
+
+          const child = addComponent(type, true);
+          inner.appendChild(child);
+        });
+
+    }
+
+
+    /* reorder drag */
+    wrapper.addEventListener('dragstart', () => {
+        draggedItem = wrapper;
+        setTimeout(() => wrapper.classList.add('dragging'), 0);
+    });
+
+    wrapper.addEventListener('dragend', () => {
+        draggedItem = null;
+        wrapper.classList.remove('dragging');
+    });
+    
+    /*delete button*/
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-bottom';
+    removeBtn.textContent = 'حذف';
+    removeBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(removeBtn);
+
+    if (!isInner) canvas.appendChild(wrapper);
+    return wrapper;
+
+}
+
+
+
+
+/* ---------- REORDER LOGIC ---------- */
+
+
+
+
+canvas.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!draggedItem) return;
+
+    const after = getDragAfterElement(canvas, e.clientY);
+    if (!after) canvas.appendChild(draggedItem);
+    else canvas.insertBefore(draggedItem, after);
+});
+
+function getDragAfterElement(container, y) {
+    const items = [...container.querySelectorAll('.form-item:not(.dragging)')];
+    return items.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+        }
+        return closest;
+    }, { offset: -Infinity }).element;
 }

@@ -1,26 +1,22 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <title>Form Builder</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Form Builder</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
+<div class="top-bar">
+    <button draggable="true" data-type="text">تکس باکس</button>
+    <button draggable="true" data-type="checkbox">چک باکس</button>
+    <button draggable="true" data-type="radio">رادیو باکس</button>
+    <button draggable="true" data-type="group">گروه</button>
 
-    <div class="sidebar">
-      <div class="component" draggable="true" data-type="text">تکس باکس</div>
-      <div class="component" draggable="true" data-type="checkbox">چک باکس</div>
-      <div class="component" draggable="true" data-type="radio">رادیو باکس</div>
-    </div>
+</div>
 
-    <div class="canvas">
-      <div id="drop-zone" class="drop-zone"></div>
-    </div>
+<div id="canvas"></div>
 
-  </div>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
