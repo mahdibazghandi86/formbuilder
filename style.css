@@ -27,6 +27,10 @@ body {
     border-radius: 6px;
     cursor: grab;
 }
+.top-bar button:hover{
+  color: lightblue;
+  background-color: #3b3b3b;
+}
 
 /* canvas */
 #canvas {
@@ -35,6 +39,8 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     align-items: start;
+    
+    
 }
 
 #canvas.drag-over {
@@ -84,7 +90,11 @@ body {
 }
 
 /* inputs */
-.form-item input[type="text"] {
+.form-item input[type="text"] 
+,.form-item input[type="number"] 
+,.form-item input[type="Date"]
+,.form-item input[type="time"]{
+    direction: rtl;
     width: 100%;
     padding: 6px;
     border-radius: 6px;
@@ -111,7 +121,7 @@ body {
 }
 
 .form-item button {
-    margin-top: 8px;
+    
     background: #333;
     color: #fff;
     border: 1px solid #444;
@@ -123,9 +133,9 @@ body {
     margin-top: 20px;
 }
 .addbtn:hover{
-    background: #616bff;
-    color: #000;
-    box-shadow: #616bff 0px 0px 10px;
+    background: #33a133;
+    
+    box-shadow: #33a133 0px 0px 10px;
 }
 
 .remove-bottom {
@@ -142,7 +152,7 @@ body {
 
 .remove-bottom:hover {
     background: #ff4d4d;
-    color: #000;
+   
     box-shadow: #ff4d4d 0px 0px 10px;
 }
 
@@ -172,4 +182,46 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+
+.divider{
+  height: 15px;
+  background: white;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+
+::-webkit-scrollbar{
+  width: 10px;
+  
+}
+::-webkit-scrollbar-track{
+  background: hsl(0, 0%, 0%);
+  
+
+}
+
+
+::-webkit-scrollbar-thumb{
+  background: hsl(0, 0%, 17%);
+  border-radius: 10px;
+
+}
+::-webkit-scrollbar-thumb:hover{
+  background: hsl(0, 0%, 25%);
+}
+
+#TimeBtn,#DateBtn{
+  
+  margin: 10px;
+
+}
+
+
+.active{
+    background: #616bff !important;
+    color: #000;
+    box-shadow: #616bff 0px 0px 10px;
 }
