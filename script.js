@@ -62,7 +62,7 @@ function addComponent(type, isInner = false) {
   /* snap */
   const snap = document.createElement('div');
   snap.className = 'snap-point';
-  
+
 
   snap.onclick = () => {
     wrapper.classList.toggle('full');
@@ -104,7 +104,7 @@ function addComponent(type, isInner = false) {
       opt.className = 'option';
       opt.innerHTML = `
                 <input type="${type}" ${type === 'radio' ? `name="${groupName}"` : ''}>
-                <input type="text" placeholder="عنوان گزینه">
+                <input type="text" class="OptionsTextBox" placeholder="عنوان گزینه">
             `;
       options.appendChild(opt);
     };
@@ -149,12 +149,12 @@ function addComponent(type, isInner = false) {
     const dateBtn = document.createElement('button');
     dateBtn.type = 'button';
     dateBtn.textContent = 'تاریخ';
-    dateBtn.id='DateBtn';
+    dateBtn.id = 'DateBtn';
 
     const timeBtn = document.createElement('button');
     timeBtn.type = 'button';
     timeBtn.textContent = 'ساعت';
-    timeBtn.id ='TimeBtn';
+    timeBtn.id = 'TimeBtn';
 
     buttons.appendChild(dateBtn);
     buttons.appendChild(timeBtn);
@@ -314,9 +314,153 @@ DeleteAllBtn.onclick = () => {
   canvas.innerHTML = "";
 }
 
-
+// ==== JSONBtn ====
 const JSONBtn = document.getElementById('JSONBtn');
 JSONBtn.onclick = () => {
-  console.log(canvas.children.input.value);
+  const VF = validateField();
+  if (VF === "success") {
+    const JSONForm = buildFormJSON();
+    console.log(JSONForm);
+  }
+  else if (VF === "null") {
+    alert("لطفا فیلد های نام را پر کنید !!");
+  }
+  else if (VF === "no-element") {
+    alert("موردی موجود نیست !!");
+  }
+  else if (VF === "null-options") {
+    alert("لطفا فیلد های گزینه را پر کنید !!");
+  }
+  else if (VF === "Group-no-element") {
+    alert("گروه شما هیچ زیر مجموعه ی ندارد !! ");
+  }
 }
 
+function buildFormJSON() {
+  const canvas = document.getElementById('canvas');
+  const result = [];
+  let counter = 0;
+  function parseItem(item) {
+    let type = null;
+
+    if (item.classList.contains('group-item')) type = 'group';
+    else if (item.querySelector('input[type="checkbox"]')) type = 'checkbox';
+    else if (item.querySelector('input[type="number"]')) type = 'number';
+    else if (item.querySelector('input[type="date"], input[type="time"]')) type = 'DateAndTime';
+    else if (item.querySelector('input[type="text"]:not(.form-title)')) type = 'text';
+
+    const titleInput = item.querySelector('.form-title');
+    const name = titleInput ? titleInput.value.trim() : '';
+
+    const component = {
+      id: counter,
+      type,
+      name
+    };
+
+    //date and time
+
+    if (type === 'DateAndTime') {
+      const dateBtn = item.querySelector('#DateBtn');
+
+      if (dateBtn && dateBtn.classList.contains('active')) {
+        component.DateOrTime = 'Date';
+      } else {
+        component.DateOrTime = 'Time';
+      }
+    }
+
+
+
+    // checkbox options
+    if (type === 'checkbox') {
+      component.options = [];
+      item.querySelectorAll('.option input[type="text"]').forEach(opt => {
+        if (opt.value.trim()) component.options.push(opt.value.trim());
+      });
+    }
+
+    // group children
+    if (type === 'group') {
+      component.children = [];
+      const inner = item.querySelector('.group-canvas');
+
+      inner.querySelectorAll(':scope > .form-item').forEach(child => {
+        component.children.push(parseItem(child));
+      });
+    }
+
+    return component;
+  }
+
+  canvas.querySelectorAll(':scope > .form-item').forEach(item => {
+    result.push(parseItem(item));
+    counter++;
+  });
+
+  return result;
+}
+
+
+// ==== save button ====
+
+const SaveBtn = document.getElementById('SaveBtn');
+
+
+
+
+//===== Validation =====
+
+
+function validateField() {
+  const titles = document.querySelectorAll('.form-title');
+  const OptionsTextBox = document.querySelectorAll('.OptionsTextBox');
+  const groups = document.querySelectorAll('.group-canvas');
+
+
+  //==== Canvas Validation =====
+
+
+  if (canvas.children.length === 0) {
+    return "no-element";
+  }
+
+
+  //==== Group Validation =====
+  if (groups.length !== 0) {
+    for (let i = 0; i < groups.length; i++) {
+      if (groups[i].children.length === 0) {
+        return "Group-no-element";
+      }
+    }
+  }
+
+
+  //==== Title Validation =====
+
+
+  for (let i = 0; i < titles.length; i++) {
+    const value = titles[i].value.trim();
+
+    if (value === '') {
+      return "null";
+    }
+  }
+  
+
+  //==== Options Validation =====
+  
+
+  for (let i = 0; i < OptionsTextBox.length; i++) {
+    const value = OptionsTextBox[i].value.trim();
+
+    if (value === '') {
+      return "null-options";
+    }
+  }
+
+
+
+  return "success";
+
+}
