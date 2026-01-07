@@ -66,6 +66,8 @@ body {
 
 /* canvas */
 #canvas {
+
+
     padding: 20px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -81,7 +83,7 @@ body {
 }
 
 #FormSettingBar{
-    box-shadow: rgba(219, 219, 219, 0.24) 0px 3px 8px;
+    
     width: 100%;
     background: #1e1e1e;
     padding: 12px;

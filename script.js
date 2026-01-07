@@ -348,9 +348,10 @@ function buildFormJSON() {
   const canvas = document.getElementById('canvas');
   const result = [];
   let counter = 0;
+  let GroupCounter = 0;
   function parseItem(item) {
     let type = null;
-
+    
     if (item.classList.contains('group-item')) type = 'group';
     else if (item.querySelector('input[type="checkbox"]')) type = 'checkbox';
     else if (item.querySelector('input[type="number"]')) type = 'number';
@@ -366,7 +367,7 @@ function buildFormJSON() {
       type,
       name
     };
-
+    component.FormName
     //date and time
 
     if (type === 'DateAndTime') {
@@ -396,15 +397,16 @@ function buildFormJSON() {
 
       inner.querySelectorAll(':scope > .form-item').forEach(child => {
         component.children.push(parseItem(child));
+        GroupCounter++;
       });
     }
-
+    counter++;
     return component;
   }
 
   canvas.querySelectorAll(':scope > .form-item').forEach(item => {
     result.push(parseItem(item));
-    counter++;
+    
   });
 
   return result;
