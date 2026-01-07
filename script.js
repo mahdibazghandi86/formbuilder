@@ -4,6 +4,7 @@ let componentId = 0;
 //برای جدا سازی هر کامپوننت
 let draggedItem = null;
 //این میگه ایا این کامپوننت رو پرفتی یا نه
+const FormName = document.getElementById('FormName');
 
 /* ---------- DRAG FROM TOOLBAR ---------- */
 
@@ -319,8 +320,12 @@ const JSONBtn = document.getElementById('JSONBtn');
 JSONBtn.onclick = () => {
   const VF = validateField();
   if (VF === "success") {
+    
+    
     const JSONForm = buildFormJSON();
     console.log(JSONForm);
+
+
   }
   else if (VF === "null") {
     alert("لطفا فیلد های نام را پر کنید !!");
@@ -333,6 +338,9 @@ JSONBtn.onclick = () => {
   }
   else if (VF === "Group-no-element") {
     alert("گروه شما هیچ زیر مجموعه ی ندارد !! ");
+  }
+  else if(VF === "null-FormName") {
+    alert("لطفا برای فرم خود نام بگذارید !!");
   }
 }
 
@@ -348,6 +356,7 @@ function buildFormJSON() {
     else if (item.querySelector('input[type="number"]')) type = 'number';
     else if (item.querySelector('input[type="date"], input[type="time"]')) type = 'DateAndTime';
     else if (item.querySelector('input[type="text"]:not(.form-title)')) type = 'text';
+    
 
     const titleInput = item.querySelector('.form-title');
     const name = titleInput ? titleInput.value.trim() : '';
@@ -416,6 +425,14 @@ function validateField() {
   const titles = document.querySelectorAll('.form-title');
   const OptionsTextBox = document.querySelectorAll('.OptionsTextBox');
   const groups = document.querySelectorAll('.group-canvas');
+  
+
+  //==== Form name Validation =====
+
+
+  if(FormName.value === ""){
+    return "null-FormName";
+  }
 
 
   //==== Canvas Validation =====
@@ -449,7 +466,7 @@ function validateField() {
   
 
   //==== Options Validation =====
-  
+
 
   for (let i = 0; i < OptionsTextBox.length; i++) {
     const value = OptionsTextBox[i].value.trim();
